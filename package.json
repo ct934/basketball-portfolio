@@ -1,0 +1,10 @@
+{
+  "name": "verspid-basketball-portfolio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "data:cbbd": "node scripts/update-cbbd-daily.mjs",
+    "data:cbbd:2026": "node scripts/update-cbbd-daily.mjs --season 2026",
+    "test": "node --test"
+  }
+}

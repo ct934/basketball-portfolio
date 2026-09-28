@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Translation Insights</title>
+  <link rel="stylesheet" href="/cbb-hub/hub.css?v=20260922-statebox1">
+</head>
+<body class="hub-body">
+  <main class="hub-shell">
+    <header class="hub-topbar">
+      <div>
+        <h1>VERSPID</h1>
+      </div>
+      <nav class="hub-nav" aria-label="Hub navigation">
+        <a href="/cbb-hub/index.html">Players</a>
+        <a href="/cbb-hub/board-builder.html">Boards</a>
+        <a href="/cbb-hub/team-builder.html">Team Builder</a>
+        <a href="/cbb-hub/player-fit.html">Player Fit</a>
+        <a href="/cbb-hub/player-comparison.html">Compare</a>
+        <a class="active" href="/cbb-hub/translation-insights.html">Translation Insights</a>
+        <a href="/cbb-hub/rotation-replacement.html">Replacement</a>
+        <a href="/cbb-hub/model-validation.html">Validation</a>
+      </nav>
+      <div class="auth-box">
+        <span id="authStatus">Checking access...</span>
+        <button id="authBtn" type="button" class="hidden">Sign out</button>
+      </div>
+    </header>
+
+    <section id="gate" class="gate-card">
+      <h2>Private model access</h2>
+      <p>Sign in to view D2-to-D1 and D1-to-NBA translation insights.</p>
+      <form id="authForm" class="auth-form">
+        <label class="auth-field"><span>Email</span><input id="authEmail" type="email" autocomplete="email" required></label>
+        <label class="auth-field"><span>Password</span><input id="authPassword" type="password" autocomplete="current-password" required minlength="6"></label>
+        <p id="authError" class="auth-error hidden"></p>
+        <div class="auth-form-actions">
+          <button id="authSubmit" type="submit" class="board-command primary">Sign in</button>
+          <button id="authForgot" type="button" class="auth-link-button">Forgot password?</button>
+        </div>
+      </form>
+      <p id="authPending" class="auth-pending hidden"></p>
+      <p class="auth-switch">New here? <button id="authToggleMode" type="button" class="auth-link-button">Create an account</button></p>
+    </section>
+
+    <section id="app" class="translation-insights hidden">
+      <div class="translation-insights-head">
+        <div>
+          <h2>Translation Insights</h2>
+          <span id="insightSample">Loading model samples...</span>
+        </div>
+        <div id="insightLevel" class="segmented" role="group" aria-label="Translation level">
+          <button class="active" data-insight-level="d2d1" type="button">D2 to D1</button>
+          <button data-insight-level="d1nba" type="button">D1 to NBA</button>
+          <button data-insight-level="d1team" type="button">D1 Team Impact</button>
+          <button data-insight-level="transfercompare" type="button">Transfer Compare</button>
+        </div>
+      </div>
+
+      <div id="insightsGrid" class="insight-grid">
+        <details class="builder-card builder-details insight-card" open>
+          <summary><h2>Skill Survival</h2><span>Carryover by archetype</span></summary>
+          <div id="skillSurvival"></div>
+        </details>
+        <details class="builder-card builder-details insight-card" open>
+          <summary><h2 id="impactTitle">Team Impact</h2><span id="impactSubtitle">Next-season team change</span></summary>
+          <div class="insight-impact-toolbar">
+            <div id="impactGroups" class="insight-group-tabs"></div>
+            <label id="impactRouteControls" class="insight-route-control hidden">
+              <span>Transfer path</span>
+              <select id="impactRoute">
+                <option value="all">All D1 transfers</option>
+              </select>
+            </label>
+          </div>
+          <div id="archetypeImpact"></div>
+        </details>
+        <details id="movementCard" class="builder-card builder-details insight-card hidden" open>
+          <summary><h2 id="movementTitle">Player Movement Board</h2><span id="movementSubtitle">Destination-team impact</span></summary>
+          <div class="movement-controls">
+            <label>
+              <span>Player or team</span>
+              <input id="movementSearch" type="search" placeholder="Search player, origin, or destination...">
+            </label>
+            <label>
+              <span>Archetype</span>
+              <select id="movementArchetype"><option value="">All archetypes</option></select>
+            </label>
+            <label>
+              <span>Arrival season</span>
+              <select id="movementSeason"><option value="">All seasons</option></select>
+            </label>
+            <div id="movementState"></div>
+          </div>
+          <div id="movementBoard"></div>
+        </details>
+      </div>
+
+      <section id="transferComparisonCard" class="builder-card transfer-comparison-card hidden">
+        <header class="transfer-comparison-head">
+          <div>
+            <span class="section-kicker">Transfer impact matching</span>
+            <h2>Which transfer will have a similar team impact?</h2>
+          </div>
+          <div class="transfer-comparison-actions">
+            <div id="transferComparisonMode" class="segmented" role="group" aria-label="Comparison mode">
+              <button data-transfer-mode="realized" type="button">Realized transfers</button>
+              <button class="active" data-transfer-mode="hypothetical" type="button">Hypothetical: my team</button>
+            </div>
+            <div id="transferComparisonLevel" class="segmented" role="group" aria-label="Transfer comparison level">
+              <button class="active" data-transfer-level="d1" type="button">D1 reference</button>
+              <button data-transfer-level="d2" type="button">D2 reference</button>
+            </div>
+            <div id="transferComparisonPool" class="segmented" role="group" aria-label="Candidate division pool">
+              <button class="active" data-transfer-pool="same" type="button">Same division</button>
+              <button data-transfer-pool="cross" type="button">Cross division</button>
+            </div>
+            <button id="exportTransferComparison" class="export-btn" type="button">Export comparison</button>
+          </div>
+        </header>
+        <p class="transfer-comparison-mode-note">Choose the reference division, then use <strong>Same division</strong> or <strong>Cross division</strong> to set the candidate pool. In <strong>Hypothetical</strong> mode, current-season candidates are scored by the impact they'd project to have on <strong>My team</strong>. <strong>Realized</strong> mode compares the reference against transfers that already happened.</p>
+
+        <div class="transfer-comparison-controls">
+          <div class="transfer-reference-control">
+            <label for="transferComparisonSearch">Reference transfer</label>
+            <input id="transferComparisonSearch" type="search" autocomplete="off" placeholder="Search player, origin, or destination..." aria-controls="transferComparisonPicker">
+            <div id="transferComparisonPicker" class="transfer-comparison-picker hidden" role="listbox"></div>
+          </div>
+          <label>
+            <span>Reference season</span>
+            <select id="transferComparisonSeason"></select>
+          </label>
+          <label>
+            <span>Candidate archetype</span>
+            <select id="transferComparisonArchetype">
+              <option value="all">All archetypes</option>
+              <option value="same">Same archetype only</option>
+            </select>
+          </label>
+          <label>
+            <span>Conference tier</span>
+            <select id="transferComparisonTier">
+              <option value="">All tiers</option>
+              <option>High Major</option>
+              <option>Mid-Major</option>
+              <option>Low Major</option>
+            </select>
+          </label>
+          <label id="transferComparisonDestinationField">
+            <span>Destination school</span>
+            <input id="transferComparisonDestination" type="search" list="transferComparisonDestinations" autocomplete="off" placeholder="All destinations">
+            <datalist id="transferComparisonDestinations"></datalist>
+          </label>
+          <label id="transferComparisonMyTeamField">
+            <span>My team</span>
+            <input id="transferComparisonMyTeam" type="search" list="transferComparisonMyTeamOptions" autocomplete="off" placeholder="e.g. Drexel">
+            <datalist id="transferComparisonMyTeamOptions"></datalist>
+          </label>
+          <div id="transferComparisonState"></div>
+        </div>
+
+        <div id="transferComparisonSelected"></div>
+        <div id="transferComparisonResults"></div>
+      </section>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="module" src="/cbb-hub/translation-insights.js?v=20260928-nbablend1"></script>
+</body>
+</html>

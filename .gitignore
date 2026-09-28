@@ -1,0 +1,9 @@
+.firebase/
+.DS_Store
+.Rhistory
+.Rapp.history
+.env
+.env.*
+!.env.example
+data/cbbd/raw/
+data/cbbd/latest.json

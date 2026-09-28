@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Model Validation</title>
+  <link rel="stylesheet" href="/cbb-hub/hub.css?v=20260922-statebox1">
+</head>
+<body class="hub-body validation-page">
+  <main class="hub-shell">
+    <header class="hub-topbar">
+      <div><h1>VERSPID</h1></div>
+      <nav class="hub-nav" aria-label="Hub navigation">
+        <a href="/cbb-hub/index.html">Players</a>
+        <a href="/cbb-hub/board-builder.html">Boards</a>
+        <a href="/cbb-hub/team-builder.html">Team Builder</a>
+        <a href="/cbb-hub/rotation-replacement.html">Replacement</a>
+        <a href="/cbb-hub/player-fit.html">Player Fit</a>
+        <a href="/cbb-hub/player-comparison.html">Compare</a>
+        <a href="/cbb-hub/translation-insights.html">Translation Insights</a>
+        <a class="active" href="/cbb-hub/model-validation.html">Validation</a>
+      </nav>
+      <div class="auth-box"><span id="authStatus">Checking access...</span><button id="authBtn" type="button" class="hidden">Sign out</button></div>
+    </header>
+
+    <section id="gate" class="gate-card">
+      <h2>Private model access</h2>
+      <p>Sign in to inspect walk-forward model validation and benchmark comparisons.</p>
+      <form id="authForm" class="auth-form">
+        <label class="auth-field"><span>Email</span><input id="authEmail" type="email" autocomplete="email" required></label>
+        <label class="auth-field"><span>Password</span><input id="authPassword" type="password" autocomplete="current-password" required minlength="6"></label>
+        <p id="authError" class="auth-error hidden"></p>
+        <div class="auth-form-actions"><button id="authSubmit" type="submit" class="board-command primary">Sign in</button><button id="authForgot" type="button" class="auth-link-button">Forgot password?</button></div>
+      </form>
+      <p id="authPending" class="auth-pending hidden"></p>
+      <p class="auth-switch">New here? <button id="authToggleMode" type="button" class="auth-link-button">Create an account</button></p>
+    </section>
+
+    <section id="app" class="validation-workspace hidden">
+      <section class="builder-card validation-hero">
+        <div>
+          <span class="fit-kicker">Model Validation</span>
+          <h2>What would the model have known before the transfer?</h2>
+          <p>Each fold trains only on completed earlier D2→D1 moves, then predicts the next season. No test-season outcomes enter model fitting.</p>
+        </div>
+        <div id="validationStatus" class="validation-status">Loading historical cohorts...</div>
+      </section>
+
+      <section id="validationSummary" class="validation-summary"></section>
+
+      <section class="validation-two-column">
+        <article class="builder-card validation-chart-card">
+          <div class="section-heading">
+            <div><h2>Predicted vs. Actual</h2><span id="validationChartNote">Untouched walk-forward predictions</span></div>
+            <div class="validation-inline-controls">
+              <select id="validationTarget" aria-label="Validation target"><option value="minutes">D1 minutes</option><option value="efficiency">Efficiency</option><option value="impact">Impact</option></select>
+              <select id="validationChartModel" aria-label="Displayed model"></select>
+            </div>
+          </div>
+          <div id="validationScatter" class="validation-scatter"></div>
+        </article>
+
+        <article class="builder-card validation-calibration-card">
+          <div class="section-heading"><div><h2>Confidence Calibration</h2><span>Accuracy by pre-transfer evidence level</span></div></div>
+          <div id="validationConfidence"></div>
+        </article>
+      </section>
+
+      <section class="builder-card validation-baselines-card">
+        <div class="section-heading">
+          <div><h2>Model vs. Simple Baselines</h2><span>Same walk-forward test rows and season boundaries</span></div>
+          <select id="validationErrorMetric" aria-label="Error metric"><option value="mae">MAE</option><option value="rmse">RMSE</option></select>
+        </div>
+        <div id="validationBaselines"></div>
+      </section>
+
+      <section class="builder-card validation-folds-card">
+        <div class="section-heading"><div><h2>Season-by-Season Backtest</h2><span>Expanding-window evaluation</span></div></div>
+        <div id="validationFolds"></div>
+      </section>
+
+      <section class="builder-card validation-breakdown-card">
+        <div class="section-heading">
+          <div><h2>Where the Model Is Accurate</h2><span>Walk-forward errors for the full model</span></div>
+          <select id="validationBreakdown" aria-label="Accuracy breakdown"><option value="archetype">Archetype</option><option value="position">Position</option><option value="conferencePath">Conference path</option><option value="heightGroup">Height group</option></select>
+        </div>
+        <div id="validationBreakdownTable"></div>
+      </section>
+
+      <section class="builder-card validation-hitmiss-card">
+        <div class="validation-board-heading">
+          <div>
+            <span class="fit-kicker">Outcome review</span>
+            <h2>Hits &amp; Misses Board</h2>
+            <span id="hitMissCount">Loading...</span>
+          </div>
+          <div class="validation-board-toggle" role="group" aria-label="Select translation path">
+            <button type="button" class="active" data-hitmiss-board="d2d1" aria-pressed="true">D2 &rarr; D1</button>
+            <button type="button" data-hitmiss-board="nba" aria-pressed="false">D1 &rarr; NBA</button>
+          </div>
+        </div>
+        <div class="validation-hitmiss-controls">
+          <label class="validation-search-control"><span>Search</span><input id="hitMissSearch" type="search" placeholder="Player name..."></label>
+          <label><span>Archetype</span><select id="hitMissArchetype"><option value="">All archetypes</option></select></label>
+          <label><span>Verdict</span><select id="hitMissVerdict"><option value="">All verdicts</option></select></label>
+          <div id="hitMissState"></div>
+        </div>
+        <div id="hitMissTable"></div>
+        <p id="hitMissNote" class="insight-note"></p>
+      </section>
+
+      <section class="builder-card validation-methodology">
+        <h2>Reading the backtest</h2>
+        <div class="validation-method-grid">
+          <div><strong>Targets</strong><p>Minutes is next-season D1 MPG. Efficiency is a weighted FG%/3P%/FT% shooting index. Impact is the existing D1 success score.</p></div>
+          <div><strong>Rotation hit</strong><p>A player is classified as a projected or actual rotation player at 18+ D1 MPG.</p></div>
+          <div><strong>Confidence</strong><p>Assigned before the result using D2 games, minutes, and similarity to the earlier training cohort.</p></div>
+          <div><strong>Guardrail</strong><p>These are out-of-time historical results, not causal estimates. Small subgroups should be read with their sample size.</p></div>
+        </div>
+      </section>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="module" src="/cbb-hub/model-validation.js?v=20260928-nbablend1"></script>
+</body>
+</html>

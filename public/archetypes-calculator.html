@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Basketball Archetype Analysis (2021-2026) | Chinh Tong</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+  <style>
+    * { box-sizing: border-box; }
+    html, body, #root { margin: 0; min-height: 100%; }
+    button, input, select { font-family: inherit; }
+    .dashboard-section { padding-top: 3rem; }
+    .dashboard-shell { display: grid; gap: 1.2rem; }
+    .dashboard-note { margin: 0 0 1rem; max-width: 78ch; }
+    @media (max-width: 760px) {
+      .dashboard-section { padding-top: 2rem; }
+      #root table { font-size: 11px !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="scroll-progress" id="scrollProgress"></div>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="./index.html">CT</a>
+      <nav class="site-nav">
+        <a href="./index.html">Home</a>
+        <a href="./about.html">About</a>
+        <a href="./resume.html">Resume</a>
+        <a class="active" href="./projects.html">Projects</a>
+        <a href="./contact.html">Contact</a>
+      </nav>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/in/chinhtong/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><img src="./assets/images/linkedin.png" alt="LinkedIn"></a>
+        <a href="mailto:chinhtv1712@gmail.com" aria-label="Email"><img src="./assets/images/email.png" alt="Email"></a>
+        <a href="tel:+15179802253" aria-label="Phone"><img src="./assets/images/phone.png" alt="Phone"></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section dashboard-section">
+    <div class="container dashboard-shell">
+      <p class="hero-kicker">Analytics</p>
+      <h1>Archetype Analysis Dashboard (2021-2026)</h1>
+      <p class="lead dashboard-note">An interactive five-season college basketball dashboard for studying player archetypes, team construction, efficiency signals, and roster patterns from 2021-22 through 2025-26.</p>
+      <div id="root"></div>
+    </div>
+  </main>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-is@18/umd/react-is.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
+  <script crossorigin src="https://unpkg.com/recharts/umd/Recharts.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+  <!-- Dashboard data (plain JS, must load first) -->
+  <script src="./tabs/data.js"></script>
+
+  <!-- Bootstrap: fetch all tab files, concatenate, compile ONCE with Babel,
+       then run as a single script so every file shares one global scope.
+       (Loading each .jsx as a separate type="text/babel" tag does NOT
+       reliably share scope across files -- this avoids that problem.) -->
+  <script>
+  (function(){
+    // Bump BUILD on every deploy to force browsers/CDN to fetch fresh tab files
+    // instead of serving stale cached .jsx (the usual "deployed but nothing changed" cause).
+    var BUILD = "verspi-20260927-v2";
+    var FILES = [
+      "./tabs/shared.jsx",
+      "./tabs/Intro.jsx",
+      "./tabs/BuildToWin.jsx",
+      "./tabs/BestCombos.jsx",
+      "./tabs/Trends.jsx",
+      "./tabs/TeamLookup.jsx",
+      "./tabs/Players.jsx",
+      "./tabs/TeamComparison.jsx",
+      "./tabs/BuildTeam.jsx",
+      "./tabs/Methodology.jsx",
+      "./tabs/app.jsx"
+    ];
+    Promise.all(FILES.map(function(url){
+      return fetch(url + "?v=" + BUILD).then(function(r){
+        if(!r.ok) throw new Error("Failed to fetch "+url+" ("+r.status+")");
+        return r.text();
+      });
+    })).then(function(sources){
+      var combined = sources.map(function(src,i){
+        return "/* ---- " + FILES[i] + " ---- */\n" + src;
+      }).join("\n\n");
+      var compiled = Babel.transform(combined, { presets: ["react"] }).code;
+      var s = document.createElement("script");
+      s.textContent = compiled;
+      document.body.appendChild(s);
+    }).catch(function(err){
+      console.error("Dashboard failed to load:", err);
+      var root = document.getElementById("root");
+      if(root){
+        root.innerHTML = "<div style='padding:24px;color:#b91c1c;font-family:sans-serif;'>"
+          + "Dashboard failed to load: " + err.message + "</div>";
+      }
+    });
+  })();
+  </script>
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Chinh Tong. All rights reserved.</p>
+    </div>
+  </footer>
+  <script type="module" src="./firebase-init.js"></script>
+  <script src="./script.js"></script>
+</body>
+</html>

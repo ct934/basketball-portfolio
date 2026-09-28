@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Player Comparison</title>
+  <link rel="stylesheet" href="/cbb-hub/hub.css?v=20260922-classmulti1">
+</head>
+<body class="hub-body comparison-page">
+  <main class="hub-shell">
+    <header class="hub-topbar">
+      <div><h1>VERSPID</h1></div>
+      <nav class="hub-nav" aria-label="Hub navigation">
+        <a href="/cbb-hub/index.html">Players</a>
+        <a href="/cbb-hub/board-builder.html">Boards</a>
+        <a href="/cbb-hub/team-builder.html">Team Builder</a>
+        <a href="/cbb-hub/player-fit.html">Player Fit</a>
+        <a class="active" href="/cbb-hub/player-comparison.html">Compare</a>
+        <a href="/cbb-hub/translation-insights.html">Translation Insights</a>
+        <a href="/cbb-hub/rotation-replacement.html">Replacement</a>
+        <a href="/cbb-hub/model-validation.html">Validation</a>
+      </nav>
+      <div class="auth-box">
+        <span id="authStatus">Checking access...</span>
+        <button id="authBtn" type="button" class="hidden">Sign out</button>
+      </div>
+    </header>
+
+    <section id="gate" class="gate-card">
+      <h2>Private model access</h2>
+      <p>Sign in to compare D1 and D2 player profiles.</p>
+      <form id="authForm" class="auth-form">
+        <label class="auth-field"><span>Email</span><input id="authEmail" type="email" autocomplete="email" required></label>
+        <label class="auth-field"><span>Password</span><input id="authPassword" type="password" autocomplete="current-password" required minlength="6"></label>
+        <p id="authError" class="auth-error hidden"></p>
+        <div class="auth-form-actions">
+          <button id="authSubmit" type="submit" class="board-command primary">Sign in</button>
+          <button id="authForgot" type="button" class="auth-link-button">Forgot password?</button>
+        </div>
+      </form>
+      <p id="authPending" class="auth-pending hidden"></p>
+      <p class="auth-switch">New here? <button id="authToggleMode" type="button" class="auth-link-button">Create an account</button></p>
+    </section>
+
+    <section id="app" class="comparison-workspace hidden">
+      <section class="comparison-controls-panel">
+        <div class="comparison-primary-controls">
+          <div class="comparison-control">
+            <span>Player level</span>
+            <div id="comparisonTargetLevel" class="segmented" role="group" aria-label="Selected player division">
+              <button class="active" data-target-level="d1" type="button">D1</button>
+              <button data-target-level="d2" type="button">D2</button>
+            </div>
+          </div>
+          <label>
+            <span>Player season</span>
+            <select id="comparisonTargetSeason"></select>
+          </label>
+          <div class="comparison-control comparison-player-control">
+            <span id="comparisonPlayerLabel">Player</span>
+            <div class="team-combobox">
+              <input id="comparisonPlayerSearch" type="search" autocomplete="off" placeholder="Search player or school..." role="combobox" aria-labelledby="comparisonPlayerLabel" aria-controls="comparisonPlayerOptions" aria-expanded="false">
+              <div id="comparisonPlayerOptions" class="team-options comparison-player-options hidden" role="listbox"></div>
+            </div>
+          </div>
+          <div class="comparison-control comparison-method-control">
+            <span>Similarity method</span>
+            <div id="comparisonMethod" class="segmented comparison-method" role="group" aria-label="Similarity method">
+              <button class="active" data-method="two-stage" type="button">Two-stage</button>
+              <button data-method="verspi" type="button">VERSPID</button>
+              <button data-method="box" type="button">Box + PBP</button>
+            </div>
+          </div>
+        </div>
+
+        <details class="comparison-filter-details" open>
+          <summary><strong>Comparison pool</strong><span id="comparisonFilterSummary">Combined divisions · same season</span></summary>
+          <div class="comparison-filter-grid">
+            <div class="comparison-control">
+              <span>Candidate pool</span>
+              <div id="comparisonPool" class="segmented comparison-pool" role="group" aria-label="Candidate division pool">
+                <button class="active" data-pool="all" type="button">Combined</button>
+                <button data-pool="same" type="button">Same level</button>
+                <button data-pool="cross" type="button">Cross level</button>
+              </div>
+            </div>
+            <label>
+              <span>Candidate seasons</span>
+              <select id="comparisonCandidateSeason">
+                <option value="same">Same season</option>
+                <option value="all">All seasons</option>
+              </select>
+            </label>
+            <div id="comparisonClassFilter" class="multi-select comparison-class-filter">
+              <span>Class</span>
+              <button id="comparisonClassBtn" type="button" aria-expanded="false">All classes</button>
+              <div id="comparisonClassMenu" class="multi-menu hidden">
+                <label><input type="checkbox" value="Freshman"> Freshman</label>
+                <label><input type="checkbox" value="Sophomore"> Sophomore</label>
+                <label><input type="checkbox" value="Junior"> Junior</label>
+                <label><input type="checkbox" value="Senior"> Senior</label>
+              </div>
+            </div>
+            <label>
+              <span>Archetype</span>
+              <select id="comparisonArchetype"><option value="">All archetypes</option></select>
+            </label>
+            <label>
+              <span>Position group</span>
+              <select id="comparisonPosition">
+                <option value="">All positions</option>
+                <option value="G/W">Guards / Wings</option>
+                <option value="Big">Bigs</option>
+              </select>
+            </label>
+            <label>
+              <span>Team</span>
+              <input id="comparisonTeam" type="search" placeholder="Filter school...">
+            </label>
+            <div id="comparisonState"></div>
+            <label>
+              <span>Results</span>
+              <select id="comparisonLimit">
+                <option value="25">Top 25</option>
+                <option value="50">Top 50</option>
+                <option value="100" selected>Top 100</option>
+              </select>
+            </label>
+          </div>
+          <details class="comparison-range-details">
+            <summary><strong>Range filters</strong><span id="comparisonRangeSummary">No active ranges</span></summary>
+            <div class="comparison-range-head">
+              <p>Filter the candidate pool before similarity scores and ranks are calculated.</p>
+              <button id="comparisonRangeReset" class="muted-button" type="button">Reset ranges</button>
+            </div>
+            <div id="comparisonRangeFilters" class="range-stack"></div>
+          </details>
+        </details>
+      </section>
+
+      <section class="comparison-visual-grid">
+        <div class="comparison-chart-panel">
+          <div class="comparison-section-head">
+            <div><h2>Similarity Profile</h2><span id="comparisonChartSubtitle">Division-standardized player profile</span></div>
+            <a id="comparisonTargetSnapshot" class="comparison-link" href="#">Open selected snapshot</a>
+          </div>
+          <div id="comparisonRadar" class="comparison-radar" aria-label="Player similarity radar chart"></div>
+          <div id="comparisonLegend" class="comparison-legend"></div>
+        </div>
+        <div id="comparisonReadout" class="comparison-readout"></div>
+      </section>
+
+      <section class="comparison-guardrail-section">
+        <div class="comparison-section-head">
+          <div><h2>Division Guardrails</h2><span>Best same-level and cross-level matches shown separately</span></div>
+        </div>
+        <div id="comparisonGuardrails" class="comparison-guardrail-grid"></div>
+      </section>
+
+      <section class="comparison-results-panel">
+        <div class="comparison-results-head">
+          <div><h2>Most Similar Players</h2><span id="comparisonResultCount">Building comparison index...</span></div>
+          <div class="comparison-results-actions">
+            <div id="comparisonTableView" class="segmented" role="group" aria-label="Comparison table view">
+              <button class="active" data-table-view="overview" type="button">Overview</button>
+              <button data-table-view="verspi" type="button">VERSPID</button>
+              <button data-table-view="box" type="button">Box Stats</button>
+            </div>
+            <button id="exportComparison" class="export-btn" type="button" title="Export the selected comparison and ranked player table">Export report</button>
+          </div>
+        </div>
+        <div id="comparisonResults" class="comparison-results"></div>
+      </section>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="module" src="/cbb-hub/player-comparison.js?v=20260928-nbablend1"></script>
+</body>
+</html>

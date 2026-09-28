@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Five Layers Portal Evaluation | Chinh Tong</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="scroll-progress" id="scrollProgress"></div>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="./index.html">CT</a>
+      <nav class="site-nav">
+        <a href="./index.html">Home</a>
+        <a href="./about.html">About</a>
+        <a href="./resume.html">Resume</a>
+        <a class="active" href="./projects.html">Projects</a>
+        <a href="./contact.html">Contact</a>
+      </nav>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/in/chinhtong/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><img src="./assets/images/linkedin.png" alt="LinkedIn"></a>
+        <a href="mailto:chinhtv1712@gmail.com" aria-label="Email"><img src="./assets/images/email.png" alt="Email"></a>
+        <a href="tel:+15179802253" aria-label="Phone"><img src="./assets/images/phone.webp" alt="Phone"></a>
+        <a href="https://x.com/TVC_Scouting" target="_blank" rel="noopener noreferrer" aria-label="X"><img src="./assets/images/x.webp" alt="X"></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container panel project-detail">
+      <p class="hero-kicker">Analytics</p>
+      <h1>Five Layers Portal Evaluation</h1>
+      <p class="section-intro">
+        This project adapts the Five Layers Diagnostic idea from Basketball AI Newsletter into a transfer portal evaluation model. I used that framework as inspiration, then rebuilt it around transfer portal scouting by importing player statistics, zone shooting data, playmaking indicators, and defensive metrics to create a more complete evaluation system.
+      </p>
+      <p class="lead">
+        I also added a Drexel fit score to the model so it can identify which portal players match Drexel&rsquo;s preferred shot zones, playmaking styles, and defensive needs based on team tendencies and problem areas from the previous season. The result is a decision-support tool that helps surface players who fit the system while still flagging specific strengths, weaknesses, and development questions.
+      </p>
+
+      <div class="carousel">
+        <button class="carousel-btn" id="carouselPrev" aria-label="Previous image">&#8249;</button>
+        <div class="carousel-track-wrap">
+          <div class="carousel-track" id="carouselTrack">
+            <img src="./assets/images/fivelayer1.png" alt="Five Layers portal evaluation screenshot 1">
+            <img src="./assets/images/fivelayer2.png" alt="Five Layers portal evaluation screenshot 2">
+          </div>
+        </div>
+        <button class="carousel-btn" id="carouselNext" aria-label="Next image">&#8250;</button>
+      </div>
+
+      <div class="project-detail-grid">
+        <section>
+          <h2>What It Evaluates</h2>
+          <ul class="contact-points project-points">
+            <li>Zone-based shooting performance and shot profile translation</li>
+            <li>Playmaking style and offensive decision-making indicators</li>
+            <li>Defensive scheme fit through portal player statistics</li>
+            <li>Drexel-specific fit scoring tied to roster needs and team weaknesses</li>
+            <li>AI-assisted synthesis to organize scouting insights into one model</li>
+          </ul>
+        </section>
+        <aside class="project-actions-card">
+          <h2>Project Link</h2>
+          <p class="section-intro">Open the live model to view the framework and evaluation output.</p>
+          <p class="project-action-row">
+            <a class="btn btn-primary" href="https://claude.ai/public/artifacts/459a6099-e1a5-4e3d-bdfe-0fe546b97c6a" target="_blank" rel="noopener noreferrer">Open Model</a>
+            <a class="btn btn-ghost" href="./projects.html">Back to Projects</a>
+          </p>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Chinh Tong. All rights reserved.</p>
+    </div>
+  </footer>
+  <script type="module" src="./firebase-init.js"></script>
+  <script src="./script.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Stats Diagnostic</title>
+<style>body{font-family:monospace;padding:24px;line-height:1.6;font-size:13px}
+.ok{color:#059669;font-weight:bold}.bad{color:#dc2626;font-weight:bold}
+h2{margin-top:24px}table{border-collapse:collapse;margin:8px 0}
+td,th{border:1px solid #ccc;padding:4px 10px;text-align:left}</style>
+</head>
+<body>
+<h1>player_data.json diagnostic</h1>
+<div id="out">Loading deployed player_data.json ...</div>
+<script>
+// We need ALLP to map indices. Fetch data.js too.
+var out = document.getElementById('out');
+function load(url){return fetch(url+'?bust='+Date.now()).then(function(r){
+  if(!r.ok) throw new Error(url+' -> HTTP '+r.status); return r;});}
+
+load('./tabs/data.js').then(function(r){return r.text();}).then(function(jsText){
+  // Extract ALLP via a sandboxed eval of just that var
+  var m = jsText.match(/var ALLP\s*=\s*(\[\[[\s\S]*?\]\]);/);
+  var ALLP = JSON.parse(m[1]);
+  return load('./player_data.json').then(function(r){return r.json();}).then(function(pd){
+    var stats = pd.stats;
+    out.innerHTML = '<p>ALLP players: <b>'+ALLP.length+'</b> | stats rows: <b>'+stats.length+'</b></p>';
+
+    // Find Josh Reeds in season 5
+    var reeds = [];
+    for(var i=0;i<ALLP.length;i++){
+      if(ALLP[i][0].toLowerCase()==='josh reed' && ALLP[i][7]===5) reeds.push(i);
+    }
+    var html = '<h2>Josh Reed (2025-26)</h2><table><tr><th>idx</th><th>Team</th><th>PTS/G</th><th>AST/G</th><th>REB/G</th><th>feats[0..3]</th></tr>';
+    reeds.forEach(function(idx){
+      var s = stats[idx];
+      html += '<tr><td>'+idx+'</td><td>'+ALLP[idx][1]+'</td><td>'+s[2]+'</td><td>'+s[3]+'</td><td>'+s[4]+'</td><td>'+s.slice(11,15).join(', ')+'</td></tr>';
+    });
+    html += '</table>';
+
+    if(reeds.length>=2){
+      var v1 = stats[reeds[0]].slice(11), v2 = stats[reeds[1]].slice(11);
+      var identical = JSON.stringify(v1)===JSON.stringify(v2);
+      html += '<p>Feature vectors identical? <span class="'+(identical?'bad':'ok')+'">'+identical+'</span> '
+            + (identical?'(BUG STILL PRESENT - old file deployed)':'(FIXED - correct file deployed)')+'</p>';
+    }
+    out.innerHTML += html;
+  });
+}).catch(function(e){ out.innerHTML = '<p class="bad">ERROR: '+e.message+'</p>'; });
+</script>
+</body>
+</html>

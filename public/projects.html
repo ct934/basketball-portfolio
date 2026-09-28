@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects | Chinh Tong</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="scroll-progress" id="scrollProgress"></div>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="./index.html">CT</a>
+      <nav class="site-nav">
+        <a href="./index.html">Home</a>
+        <a href="./about.html">About</a>
+        <a href="./resume.html">Resume</a>
+        <a class="active" href="./projects.html">Projects</a>
+        <a href="./contact.html">Contact</a>
+      </nav>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/in/chinhtong/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><img src="./assets/images/linkedin.png" alt="LinkedIn"></a>
+        <a href="mailto:chinhtv1712@gmail.com" aria-label="Email"><img src="./assets/images/email.png" alt="Email"></a>
+        <a href="tel:+15179802253" aria-label="Phone"><img src="./assets/images/phone.webp" alt="Phone"></a>
+        <a href="https://x.com/TVC_Scouting" target="_blank" rel="noopener noreferrer" aria-label="X"><img src="./assets/images/x.webp" alt="X"></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <h1>Projects</h1>
+      <p class="section-intro">
+        Use the filters to view all projects, scouting reports, or analytics work.
+      </p>
+
+      <div class="filter-row">
+        <button class="filter-btn active" data-filter="all" type="button">All</button>
+        <button class="filter-btn" data-filter="scouting" type="button">Scouting</button>
+        <button class="filter-btn" data-filter="analytics" type="button">Analytics</button>
+      </div>
+
+      <div class="scroll-hint" id="scrollHint">
+        <div class="scroll-hint-arrows">
+          <span></span><span></span><span></span>
+        </div>
+        Scroll to explore more
+      </div>
+      <div class="project-grid">
+       
+        <a class="project-card in-view" href="./stephon-castle.html">
+          <img src="./assets/images/stephoncastle.webp" alt="Stephon Castle scouting report">
+          <div class="meta"><h4>Stephon Castle</h4><p>Scouting</p></div>
+        </a>
+        <a class="project-card" data-category="scouting" href="./nba-2025-draft-scouting.html">
+          <img src="./assets/images/2025_NBA_draft_logo.png" alt="2025 NBA Draft scouting projects">
+          <div class="meta"><h4>2025 NBA Draft Scouting</h4><p>Scouting</p></div>
+        </a>
+        <a class="project-card" data-category="scouting" href="./nba-2026-draft-scouting.html">
+          <img src="./assets/images/nba2026draft.avif" alt="2026 NBA Draft scouting projects">
+          <div class="meta"><h4>2026 NBA Draft Scouting</h4><p>Scouting</p></div>
+        </a>
+        <a class="project-card" data-category="scouting" href="./nba-2027-draft-scouting.html">
+          <img src="./assets/images/nbadraft2027.png" alt="2027 NBA Draft Prospect Scouting Profile">
+          <div class="meta"><h4>2027 NBA Draft Prospect Scouting Profile</h4><p>Scouting</p></div>
+        </a>
+
+        <a class="project-card" data-category="analytics" href="./archetypes-calculator.html">
+          <img src="./assets/images/Archetype Dashboard.png" alt="Archetype Analysis Dashboard project screenshot">
+          <div class="meta"><h4>Archetype Analysis Dashboard (2021-2026)</h4><p>Analytics</p></div>
+        </a>
+       
+        <a class="project-card" data-category="analytics" href="./archetype-translation.html">
+          <img src="./assets/images/archetypetranslation.png" alt="Cross Division Archetype Transfer project screenshot">
+          <div class="meta"><h4>D2 → D1 Archetype Translation</h4><p>Analytics</p></div>
+        </a>
+        
+        <a class="project-card" data-category="analytics" href="./college-nba-translation.html">
+          <img src="./assets/images/collegetonba.png" alt="Archetype NBA Translation project screenshot">
+          <div class="meta"><h4>College → NBA Archetype Translation</h4><p>Analytics</p></div>
+        </a>
+
+        <a class="project-card" data-category="analytics" href="./transfer-portal.html">
+          <img src="./assets/images/portaltrackerandcrossdivisoncomparison.png" alt="Transfer Portal Comparison project">
+          <div class="meta"><h4>Transfer Portal Tracker &amp; Cross Division Comparison</h4><p>Analytics</p></div>
+        </a>
+
+        <a class="project-card" data-category="analytics" href="./nba-2025-comparison.html">
+          <img src="./assets/images/2025nbadraftcomparison.png" alt="NBA 2025 Draft Prospect Comparison project">
+          <div class="meta"><h4>NBA 2025 Draft Prospect Comparison</h4><p>Analytics</p></div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Chinh Tong. All rights reserved.</p>
+    </div>
+  </footer>
+  <script type="module" src="./firebase-init.js"></script>
+  <script src="./script.js"></script>
+</body>
+</html>

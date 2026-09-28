@@ -1,0 +1,95 @@
+name: Update 2026-27 college basketball data
+
+on:
+  schedule:
+    # Run at both possible 6 a.m. Eastern UTC offsets; the gate below keeps one.
+    - cron: "0 10,11 * * *"
+  workflow_dispatch:
+    inputs:
+      season:
+        description: "Season start year (2026 means 2026-27)"
+        required: false
+        default: "2026"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cbbd-daily-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check 6 a.m. Eastern schedule
+        id: schedule_gate
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          elif node scripts/is-6am-eastern.mjs; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            status=$?
+            if [ "$status" -eq 78 ]; then
+              echo "run=false" >> "$GITHUB_OUTPUT"
+            else
+              exit "$status"
+            fi
+          fi
+
+      - name: Fetch and validate CBBD data
+        if: steps.schedule_gate.outputs.run == 'true'
+        env:
+          CBBD_API_KEY: ${{ secrets.CBBD_API_KEY }}
+          REQUESTED_SEASON: ${{ inputs.season || '2026' }}
+        run: node scripts/update-cbbd-daily.mjs --season "$REQUESTED_SEASON"
+
+      - name: Preserve dated raw snapshot
+        if: steps.schedule_gate.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cbbd-raw-${{ github.run_id }}
+          path: |
+            data/cbbd/raw/
+            data/cbbd/latest.json
+            data/cbbd/pbp-state.json
+          retention-days: 90
+
+      - name: Commit current Hub feed
+        if: steps.schedule_gate.outputs.run == 'true'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/cbbd/pbp-state.json public/cbb-hub/data/cbbd-current.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "data: update daily college basketball stats"
+          git push
+
+      - name: Check Firebase deployment credentials
+        if: steps.schedule_gate.outputs.run == 'true'
+        id: firebase_gate
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        shell: bash
+        run: |
+          if [ -n "$FIREBASE_SERVICE_ACCOUNT" ]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Deploy updated feed to Firebase Hosting
+        if: steps.schedule_gate.outputs.run == 'true' && steps.firebase_gate.outputs.deploy == 'true'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          channelId: live
+          projectId: basketball-portfolio-7c1eb

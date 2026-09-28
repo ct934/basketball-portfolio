@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Board Builder</title>
+  <link rel="stylesheet" href="/cbb-hub/hub.css?v=20260922-statebox1">
+</head>
+<body class="hub-body board-page">
+  <main class="hub-shell">
+    <header class="hub-topbar">
+      <div><h1>VERSPID</h1></div>
+      <nav class="hub-nav" aria-label="Hub navigation">
+        <a href="/cbb-hub/index.html">Players</a>
+        <a class="active" href="/cbb-hub/board-builder.html">Boards</a>
+        <a href="/cbb-hub/team-builder.html">Team Builder</a>
+        <a href="/cbb-hub/player-fit.html">Player Fit</a>
+        <a href="/cbb-hub/player-comparison.html">Compare</a>
+        <a href="/cbb-hub/translation-insights.html">Translation Insights</a>
+        <a href="/cbb-hub/rotation-replacement.html">Replacement</a>
+        <a href="/cbb-hub/model-validation.html">Validation</a>
+      </nav>
+      <div class="auth-box">
+        <span id="authStatus">Checking access...</span>
+        <button id="authBtn" type="button" class="hidden">Sign out</button>
+      </div>
+    </header>
+
+    <section id="gate" class="gate-card">
+      <h2>Private model access</h2>
+      <p>Sign in to build and manage your player boards.</p>
+      <form id="authForm" class="auth-form">
+        <label class="auth-field"><span>Email</span><input id="authEmail" type="email" autocomplete="email" required></label>
+        <label class="auth-field"><span>Password</span><input id="authPassword" type="password" autocomplete="current-password" required minlength="6"></label>
+        <p id="authError" class="auth-error hidden"></p>
+        <div class="auth-form-actions">
+          <button id="authSubmit" type="submit" class="board-command primary">Sign in</button>
+          <button id="authForgot" type="button" class="auth-link-button">Forgot password?</button>
+        </div>
+      </form>
+      <p id="authPending" class="auth-pending hidden"></p>
+      <p class="auth-switch">New here? <button id="authToggleMode" type="button" class="auth-link-button">Create an account</button></p>
+    </section>
+
+    <section id="app" class="board-workspace hidden">
+      <section class="board-toolbar-panel">
+        <div class="board-toolbar-primary">
+          <label>
+            <span>Active board</span>
+            <select id="boardSelect"><option value="">No boards yet</option></select>
+          </label>
+          <label class="board-name-control">
+            <span>Board name</span>
+            <input id="boardName" type="text" maxlength="80" placeholder="Board name" disabled>
+          </label>
+          <div class="board-new-control">
+            <label><span>New board</span><input id="newBoardName" type="text" maxlength="80" placeholder="2026 Portal Targets"></label>
+            <button id="createBoard" class="board-command primary" type="button">Create</button>
+          </div>
+          <button id="deleteBoard" class="board-command danger" type="button" disabled>Delete board</button>
+          <div class="board-view-control">
+            <span>View</span>
+            <div id="boardView" class="segmented" role="group" aria-label="Board display">
+              <button class="active" data-board-view="board" type="button">Board</button>
+              <button data-board-view="table" type="button">Table</button>
+            </div>
+          </div>
+          <div class="board-view-control">
+            <span>Stats</span>
+            <div id="boardStatMode" class="segmented hidden" role="group" aria-label="Table stat display">
+              <button class="active" data-board-stat-mode="verspi" type="button">VERSPID</button>
+              <button data-board-stat-mode="stats" type="button">Box Stats</button>
+            </div>
+          </div>
+        </div>
+        <div class="board-toolbar-secondary">
+          <div class="board-new-control">
+            <label><span>Custom column</span><input id="newColumnName" type="text" maxlength="50" placeholder="Priority, Watch, Sleeper..."></label>
+            <button id="addColumn" class="board-command" type="button" disabled>Add column</button>
+          </div>
+          <div class="board-toolbar-actions">
+            <span id="boardSaveStatus" class="board-save-status">Select or create a board</span>
+            <button id="exportBoard" class="board-command primary" type="button" disabled>Export board</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="board-layout">
+        <aside class="board-library-panel">
+          <div class="board-panel-heading">
+            <div><h2>Saved Players</h2><span id="savedLibraryCount">Loading saved players...</span></div>
+          </div>
+          <div class="board-library-filters">
+            <label><span>Search</span><input id="boardPlayerSearch" type="search" placeholder="Player or team..."></label>
+            <label>
+              <span>Target list</span>
+              <select id="boardTargetFilter">
+                <option value="all">All saved players</option>
+                <option value="portal">Transfer Portal</option>
+                <option value="draft">NBA Draft</option>
+                <option value="both">Portal and Draft</option>
+                <option value="none">No target set</option>
+              </select>
+            </label>
+            <div class="board-level-filter">
+              <span>Level</span>
+              <div id="boardLevelFilter" class="segmented" role="group" aria-label="Saved player division">
+                <button class="active" data-board-level="d1" type="button">D1</button>
+                <button class="active" data-board-level="d2" type="button">D2</button>
+              </div>
+            </div>
+            <div id="boardState"></div>
+          </div>
+          <div id="savedPlayerLibrary" class="saved-player-library"></div>
+        </aside>
+
+        <section class="board-main-panel">
+          <div id="boardEmpty" class="board-empty-state">
+            <h2>Create your first board</h2>
+            <p>Give the board a name above, then add saved players and organize them into custom columns.</p>
+          </div>
+          <div id="boardSurface" class="hidden">
+            <div class="board-summary-row">
+              <div><h2 id="boardTitle">Board</h2><span id="boardSummary"></span></div>
+              <span class="board-drag-note">Drag player cards to reorder or move them between columns.</span>
+            </div>
+            <div id="boardColumns" class="board-columns-scroll"></div>
+            <div id="boardTable" class="board-table-view hidden"></div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="module" src="/cbb-hub/board-builder.js?v=20260928-nbablend1"></script>
+</body>
+</html>

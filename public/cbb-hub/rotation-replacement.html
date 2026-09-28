@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portal Rotation Replacement</title>
+  <link rel="stylesheet" href="/cbb-hub/hub.css?v=20260922-statebox1">
+</head>
+<body class="hub-body replacement-page">
+  <main class="hub-shell">
+    <header class="hub-topbar">
+      <div><h1>VERSPID</h1></div>
+      <nav class="hub-nav" aria-label="Hub navigation">
+        <a href="/cbb-hub/index.html">Players</a>
+        <a href="/cbb-hub/board-builder.html">Boards</a>
+        <a href="/cbb-hub/team-builder.html">Team Builder</a>
+        <a class="active" href="/cbb-hub/rotation-replacement.html">Replacement</a>
+        <a href="/cbb-hub/player-fit.html">Player Fit</a>
+        <a href="/cbb-hub/player-comparison.html">Compare</a>
+        <a href="/cbb-hub/translation-insights.html">Translation Insights</a>
+        <a href="/cbb-hub/model-validation.html">Validation</a>
+      </nav>
+      <div class="auth-box">
+        <span id="authStatus">Checking access...</span>
+        <button id="authBtn" type="button" class="hidden">Sign out</button>
+      </div>
+    </header>
+
+    <section id="gate" class="gate-card">
+      <h2>Private model access</h2>
+      <p>Sign in to rank realistic replacements from the combined D1/D2 player pool.</p>
+      <form id="authForm" class="auth-form">
+        <label class="auth-field"><span>Email</span><input id="authEmail" type="email" autocomplete="email" required></label>
+        <label class="auth-field"><span>Password</span><input id="authPassword" type="password" autocomplete="current-password" required minlength="6"></label>
+        <p id="authError" class="auth-error hidden"></p>
+        <div class="auth-form-actions">
+          <button id="authSubmit" type="submit" class="board-command primary">Sign in</button>
+          <button id="authForgot" type="button" class="auth-link-button">Forgot password?</button>
+        </div>
+      </form>
+      <p id="authPending" class="auth-pending hidden"></p>
+      <p class="auth-switch">New here? <button id="authToggleMode" type="button" class="auth-link-button">Create an account</button></p>
+    </section>
+
+    <section id="app" class="replacement-workspace hidden">
+      <section class="builder-card replacement-controls-panel">
+        <div class="section-heading replacement-heading">
+          <div>
+            <span class="fit-kicker">Portal Rotation Replacement Model</span>
+            <h2>Replace the role, not just the box score</h2>
+            <p>Choose a team and departing player, then rank D1 and D2 candidates by role, translation, need, opportunity, level adjustment, and projected impact.</p>
+          </div>
+          <span id="replacementStatus" class="replacement-status">Loading model...</span>
+        </div>
+        <div class="replacement-control-grid">
+          <label><span>Team</span><select id="replacementTeam"></select></label>
+          <label><span>Departing player</span><select id="replacementPlayer"></select></label>
+          <label><span>Candidate search</span><input id="replacementSearch" type="search" placeholder="Player, school, or archetype..."></label>
+          <label><span>Source tier</span>
+            <select id="replacementTier">
+              <option value="">All tiers</option>
+              <option>High Major</option><option>Mid-Major</option><option>Low Major</option><option value="D2">D2</option>
+            </select>
+          </label>
+          <label><span>Archetype</span><select id="replacementArchetype"><option value="">All archetypes</option></select></label>
+          <div id="replacementState"></div>
+          <label><span>Minimum MPG</span>
+            <select id="replacementMinutes"><option value="0">Any minutes</option><option value="10">10+ MPG</option><option value="15">15+ MPG</option><option value="20" selected>20+ MPG</option><option value="25">25+ MPG</option></select>
+          </label>
+          <div>
+            <span class="replacement-label">Candidate divisions</span>
+            <div id="replacementLevels" class="segmented" role="group" aria-label="Candidate divisions">
+              <button class="active" data-level="d1" type="button">D1</button>
+              <button class="active" data-level="d2" type="button">D2</button>
+            </div>
+          </div>
+          <label><span>Show results</span><select id="replacementLimit"><option>25</option><option selected>50</option><option>100</option><option>250</option></select></label>
+          <label><span>Availability</span><select id="replacementAvailability"><option value="all">All modeled candidates</option><option value="targets">My portal targets only</option></select></label>
+        </div>
+      </section>
+
+      <section id="replacementLoss" class="builder-card replacement-loss"></section>
+
+      <section class="builder-card replacement-results-panel">
+        <div class="section-heading">
+          <div><h2>Replacement Board</h2><span id="replacementCount">Calculating candidates...</span></div>
+        </div>
+        <div id="replacementResults"></div>
+      </section>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="module" src="/cbb-hub/rotation-replacement.js?v=20260928-nbablend1"></script>
+</body>
+</html>

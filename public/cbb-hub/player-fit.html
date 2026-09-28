@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Player Fit</title>
+  <link rel="stylesheet" href="/cbb-hub/hub.css?v=20260922-statebox1">
+</head>
+<body class="hub-body player-fit-page">
+  <main class="hub-shell">
+    <header class="hub-topbar">
+      <div>
+        <h1>VERSPID</h1>
+      </div>
+      <nav class="hub-nav" aria-label="Hub navigation">
+        <a href="/cbb-hub/index.html">Players</a>
+        <a href="/cbb-hub/board-builder.html">Boards</a>
+        <a href="/cbb-hub/team-builder.html">Team Builder</a>
+        <a class="active" href="/cbb-hub/player-fit.html">Player Fit</a>
+        <a href="/cbb-hub/player-comparison.html">Compare</a>
+        <a href="/cbb-hub/translation-insights.html">Translation Insights</a>
+        <a href="/cbb-hub/rotation-replacement.html">Replacement</a>
+        <a href="/cbb-hub/model-validation.html">Validation</a>
+      </nav>
+      <div class="auth-box">
+        <span id="authStatus">Checking access...</span>
+        <button id="authBtn" type="button" class="hidden">Sign out</button>
+      </div>
+    </header>
+
+    <section id="gate" class="gate-card">
+      <h2>Private model access</h2>
+      <p>Sign in to evaluate D1 destinations for D1 and D2 players.</p>
+      <form id="authForm" class="auth-form">
+        <label class="auth-field"><span>Email</span><input id="authEmail" type="email" autocomplete="email" required></label>
+        <label class="auth-field"><span>Password</span><input id="authPassword" type="password" autocomplete="current-password" required minlength="6"></label>
+        <p id="authError" class="auth-error hidden"></p>
+        <div class="auth-form-actions">
+          <button id="authSubmit" type="submit" class="board-command primary">Sign in</button>
+          <button id="authForgot" type="button" class="auth-link-button">Forgot password?</button>
+        </div>
+      </form>
+      <p id="authPending" class="auth-pending hidden"></p>
+      <p class="auth-switch">New here? <button id="authToggleMode" type="button" class="auth-link-button">Create an account</button></p>
+    </section>
+
+    <section id="app" class="player-fit-workspace hidden">
+      <section class="builder-controls-panel player-fit-controls-panel">
+        <div class="player-fit-controls">
+          <div class="fit-control">
+            <span>Player level</span>
+            <div id="fitPlayerLevel" class="segmented fit-levels" role="group" aria-label="Player level">
+              <button class="active" data-fit-level="d1" type="button">D1</button>
+              <button data-fit-level="d2" type="button">D2</button>
+            </div>
+          </div>
+          <div class="fit-control player-fit-combobox">
+            <span id="fitPlayerLabel">Player</span>
+            <div class="team-combobox">
+              <input id="fitPlayerSearch" type="search" autocomplete="off" placeholder="Search player or school..." role="combobox" aria-labelledby="fitPlayerLabel" aria-controls="fitPlayerOptions" aria-expanded="false">
+              <div id="fitPlayerOptions" class="team-options fit-player-options hidden" role="listbox"></div>
+            </div>
+          </div>
+          <label>
+            <span>Team season</span>
+            <select id="fitSeason"></select>
+          </label>
+          <label>
+            <span>Team search</span>
+            <input id="fitTeamSearch" type="search" placeholder="Search destination...">
+          </label>
+          <label>
+            <span>Conference tier</span>
+            <select id="fitTier">
+              <option value="">All tiers</option>
+              <option>High Major</option>
+              <option>Mid-Major</option>
+              <option>Low Major</option>
+            </select>
+          </label>
+          <label>
+            <span>Sort teams</span>
+            <select id="fitSort">
+              <option value="fit">Fit score</option>
+              <option value="gain">Projected AdjEM gain</option>
+              <option value="need">Team opportunity</option>
+              <option value="rank">Projected rank</option>
+              <option value="quality">Current AdjEM</option>
+            </select>
+          </label>
+        </div>
+        <label class="fit-checkbox">
+          <input id="fitExcludeCurrent" type="checkbox" checked>
+          <span>Exclude current team</span>
+        </label>
+      </section>
+
+      <section id="fitPlayerSummary" class="builder-card fit-player-summary"></section>
+
+      <section class="builder-card fit-results-panel">
+        <div class="fit-results-head">
+          <div>
+            <h2>Best Team Fits</h2>
+            <span id="fitResultCount">Calculating destinations...</span>
+          </div>
+          <div class="fit-results-actions">
+            <p><strong>Fit</strong> = 70% team-impact match + 20% role alignment + 10% overall VERSPI quality.</p>
+            <button id="exportPlayerFit" class="export-btn" type="button" title="Export the top 100 destinations and their complete analytical detail">Export fit report</button>
+          </div>
+        </div>
+        <div id="fitResults" class="fit-results"></div>
+      </section>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="module" src="/cbb-hub/player-fit.js?v=20260928-nbablend1"></script>
+</body>
+</html>

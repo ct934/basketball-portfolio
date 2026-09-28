@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transfer Portal Scouting &amp; Player Evaluation | Chinh Tong</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="scroll-progress" id="scrollProgress"></div>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="./index.html">CT</a>
+      <nav class="site-nav">
+        <a href="./index.html">Home</a>
+        <a href="./about.html">About</a>
+        <a href="./resume.html">Resume</a>
+        <a class="active" href="./projects.html">Projects</a>
+        <a href="./contact.html">Contact</a>
+      </nav>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/in/chinhtong/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><img src="./assets/images/linkedin.png" alt="LinkedIn"></a>
+        <a href="mailto:chinhtv1712@gmail.com" aria-label="Email"><img src="./assets/images/email.png" alt="Email"></a>
+        <a href="tel:+15179802253" aria-label="Phone"><img src="./assets/images/phone.webp" alt="Phone"></a>
+        <a href="https://x.com/TVC_Scouting" target="_blank" rel="noopener noreferrer" aria-label="X"><img src="./assets/images/x.webp" alt="X"></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container panel project-detail">
+      <p class="hero-kicker">Scouting + Analytics</p>
+      <h1>Transfer Portal Scouting &amp; Player Evaluation</h1>
+      <p class="section-intro">
+        Conducted comprehensive scouting and analytical evaluations of transfer portal prospects to identify players that matched coaching staff roster needs and desired positional archetypes. Combined statistical analysis with film study to assess each prospect&rsquo;s production, efficiency, and overall playing style, ensuring on-court performance aligned with quantitative data.
+      </p>
+      <p class="lead">
+        Developed detailed scouting reports highlighting player strengths, weaknesses, fit within team schemes, and projected impact. Ranked prospects on evaluation boards based on overall fit, upside, and coaching priorities, then presented finalized reports and player boards to coaching staff to support recruiting and roster-building decisions.
+      </p>
+
+      <div class="carousel">
+        <button class="carousel-btn" id="carouselPrev" aria-label="Previous image">&#8249;</button>
+        <div class="carousel-track-wrap">
+          <div class="carousel-track" id="carouselTrack">
+            <img src="./assets/images/Guard Transfer Board.png" alt="Guard transfer board">
+            <img src="./assets/images/Forward Transfer Board.png" alt="Forward transfer board">
+          </div>
+        </div>
+        <button class="carousel-btn" id="carouselNext" aria-label="Next image">&#8250;</button>
+      </div>
+
+      <div class="project-detail-grid">
+        <section>
+          <h2>Key Focus Areas</h2>
+          <ul class="contact-points project-points">
+            <li>Statistical profile analysis and efficiency evaluation</li>
+            <li>Film breakdown to validate data against game performance</li>
+            <li>Archetype and scheme-fit assessment</li>
+            <li>Prospect ranking and board development</li>
+            <li>Communication of scouting insights to coaching staff</li>
+          </ul>
+        </section>
+        <aside class="project-actions-card">
+          <h2>Project Links</h2>
+          <p class="section-intro">Open the full report or head back to the project library.</p>
+          <p class="project-action-row">
+            <a class="btn btn-primary" href="./assets/Guards Transfer Report.pdf" target="_blank" rel="noopener noreferrer">Open Full Scouting Report</a>
+            <a class="btn btn-ghost" href="./projects.html">Back to Projects</a>
+          </p>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Chinh Tong. All rights reserved.</p>
+    </div>
+  </footer>
+  <script type="module" src="./firebase-init.js"></script>
+  <script src="./script.js"></script>
+</body>
+</html>

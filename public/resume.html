@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume | Chinh Tong</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="scroll-progress" id="scrollProgress"></div>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="./index.html">CT</a>
+      <nav class="site-nav">
+        <a href="./index.html">Home</a>
+        <a href="./about.html">About</a>
+        <a class="active" href="./resume.html">Resume</a>
+        <a href="./projects.html">Projects</a>
+        <a href="./contact.html">Contact</a>
+      </nav>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/in/chinhtong/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><img src="./assets/images/linkedin.png" alt="LinkedIn"></a>
+        <a href="mailto:chinhtv1712@gmail.com" aria-label="Email"><img src="./assets/images/email.png" alt="Email"></a>
+        <a href="tel:+15179802253" aria-label="Phone"><img src="./assets/images/phone.webp" alt="Phone"></a>
+        <a href="https://x.com/TVC_Scouting" target="_blank" rel="noopener noreferrer" aria-label="X"><img src="./assets/images/x.webp" alt="X"></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <h1>Resume</h1>
+      <p class="lead">View my full resume below and download a copy.</p>
+      <p>
+        <a class="btn btn-primary" href="./assets/Resume/resume.pdf" download>Download Resume</a>
+      </p>
+
+      <div class="resume-frame-wrap">
+        <img
+          class="resume-image"
+          src="./assets/Resume/Resume.png"
+          alt="Chinh Tong resume preview"
+          width="1700"
+          height="2200"
+          decoding="async"
+          fetchpriority="high"
+        >
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Chinh Tong. All rights reserved.</p>
+    </div>
+  </footer>
+  <script type="module" src="./firebase-init.js"></script>
+  <script src="./script.js"></script>
+</body>
+</html>

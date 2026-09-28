@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scouting Log Admin | Chinh Tong</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <style>
+    /* Admin-only utility styling. Inherits the site palette via CSS vars. */
+    .admin-wrap { max-width: 760px; }
+    .admin-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.6rem 1.6rem 1.8rem;
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 1.4rem;
+    }
+    .admin-field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
+    .admin-field label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+    .admin-field input, .admin-field select, .admin-field textarea {
+      font-family: var(--text_body);
+      font-size: 0.98rem;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.6rem 0.75rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .admin-field textarea { min-height: 90px; resize: vertical; line-height: 1.5; }
+    .admin-field input:focus, .admin-field select:focus, .admin-field textarea:focus {
+      outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(3,124,110,0.12);
+    }
+    .admin-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 620px) { .admin-row { grid-template-columns: 1fr; } }
+    .admin-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; align-items: center; margin-top: 0.4rem; }
+    .admin-msg { font-size: 0.9rem; font-weight: 600; }
+    .admin-msg.ok { color: var(--accent-2); }
+    .admin-msg.err { color: #b3261e; }
+    .admin-list { display: flex; flex-direction: column; border-top: 1px solid var(--border); margin-top: 0.5rem; }
+    .admin-list-item {
+      display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+      padding: 0.7rem 0.2rem; border-bottom: 1px solid var(--border);
+    }
+    .admin-list-item small { color: var(--muted); }
+    .admin-list-item .row-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+    .link-btn { background: none; border: none; color: var(--accent-2); font-weight: 700; cursor: pointer; font-family: inherit; font-size: 0.88rem; padding: 0.2rem 0.3rem; }
+    .link-btn.danger { color: #b3261e; }
+    .muted-note { color: var(--muted); font-size: 0.85rem; line-height: 1.5; }
+    #appView { display: none; }
+  </style>
+</head>
+<body>
+  <div class="scroll-progress" id="scrollProgress"></div>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="./index.html">CT</a>
+      <nav class="site-nav">
+        <a href="./index.html">Home</a>
+        <a href="./projects.html">Projects</a>
+      </nav>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/in/chinhtong/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><img src="./assets/images/linkedin.png" alt="LinkedIn"></a>
+        <a href="mailto:chinhtv1712@gmail.com" aria-label="Email"><img src="./assets/images/email.png" alt="Email"></a>
+        <a href="tel:+15179802253" aria-label="Phone"><img src="./assets/images/phone.webp" alt="Phone"></a>
+        <a href="https://x.com/TVC_Scouting" target="_blank" rel="noopener noreferrer" aria-label="X"><img src="./assets/images/x.webp" alt="X"></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container admin-wrap">
+      <h1 style="margin-bottom:0.4rem;">Scouting Log Admin</h1>
+
+      <!-- LOGIN / SIGN UP -->
+      <div id="loginView" class="admin-card">
+        <p class="muted-note" style="margin-top:0;">Private area. <strong>Log in</strong> to add or edit scouting reports. First time here? Enter an email and password and click <strong>Sign Up</strong> to create your owner account.</p>
+        <div class="admin-field">
+          <label for="email">Email</label>
+          <input id="email" type="email" autocomplete="username">
+        </div>
+        <div class="admin-field">
+          <label for="password">Password (at least 6 characters)</label>
+          <input id="password" type="password" autocomplete="current-password">
+        </div>
+        <div class="admin-actions">
+          <button class="btn btn-primary" id="loginBtn">Log In</button>
+          <button class="btn btn-ghost" id="signupBtn">Sign Up</button>
+          <span class="admin-msg" id="loginMsg"></span>
+        </div>
+      </div>
+
+      <!-- NO-ACCESS (signed in, but not the owner account) -->
+      <div id="noAccessView" class="admin-card" style="display:none;">
+        <p class="muted-note" style="margin-top:0;">You're signed in, but this account doesn't have edit access. The scouting reports are read-only for everyone except the site owner.</p>
+        <div class="admin-actions">
+          <span class="muted-note" id="noAccessWho"></span>
+          <button class="link-btn" id="logoutBtn2">Sign out</button>
+        </div>
+      </div>
+
+      <!-- APP -->
+      <div id="appView">
+        <div class="admin-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
+            <span class="muted-note" id="whoami"></span>
+            <button class="link-btn" id="logoutBtn">Sign out</button>
+          </div>
+        </div>
+
+        <!-- NEW / EDIT REPORT -->
+        <div class="admin-card">
+          <h2 style="margin-top:0;">New Report</h2>
+          <input type="hidden" id="editingId" value="">
+
+          <div class="admin-field">
+            <label for="player">Player</label>
+            <select id="player"></select>
+          </div>
+
+          <div class="admin-row">
+            <div class="admin-field">
+              <label for="reportType">Report Type</label>
+              <select id="reportType">
+                <option value="game">Game</option>
+                <option value="preseason">Preseason</option>
+              </select>
+            </div>
+            <div class="admin-field">
+              <label for="date">Date</label>
+              <input id="date" type="date">
+            </div>
+          </div>
+
+          <div class="admin-field">
+            <label for="title">Title (e.g. "Kansas vs Baylor" or "Preseason Report")</label>
+            <input id="title" type="text" placeholder="Kansas vs Baylor">
+          </div>
+
+          <div class="admin-row">
+            <div class="admin-field">
+              <label for="draft">Draft Projection</label>
+              <input id="draft" type="text" list="draftList" placeholder="Top 5">
+              <datalist id="draftList">
+                <option value="Top 5"></option>
+                <option value="Lottery Pick"></option>
+                <option value="First Round"></option>
+                <option value="Second Round"></option>
+                <option value="Draft Follow"></option>
+                <option value="Two-Way / UDFA"></option>
+              </datalist>
+            </div>
+            <div class="admin-field">
+              <label for="role">NBA Role Projection</label>
+              <input id="role" type="text" list="roleList" placeholder="All-NBA Potential">
+              <datalist id="roleList">
+                <option value="All-NBA Potential"></option>
+                <option value="Quality Starter"></option>
+                <option value="Rotation Player"></option>
+                <option value="Role Player"></option>
+                <option value="Role Projection TBD"></option>
+              </datalist>
+            </div>
+          </div>
+
+          <div class="admin-field">
+            <label for="info">Info (measurables line — School | Class | Position | Height | Weight | Wingspan)</label>
+            <input id="info" type="text">
+          </div>
+
+          <div class="admin-field">
+            <label for="stats">Stats (optional — leave blank if none yet)</label>
+            <textarea id="stats"></textarea>
+          </div>
+
+          <div class="admin-field">
+            <label for="physical">Physical</label>
+            <textarea id="physical"></textarea>
+          </div>
+
+          <div class="admin-field">
+            <label for="offense">Offense</label>
+            <textarea id="offense"></textarea>
+          </div>
+
+          <div class="admin-field">
+            <label for="defense">Defense</label>
+            <textarea id="defense"></textarea>
+          </div>
+
+          <div class="admin-field">
+            <label for="outlook">Outlook</label>
+            <textarea id="outlook"></textarea>
+          </div>
+
+          <div class="admin-field">
+            <label for="summary">Summary (short blurb shown in the log list)</label>
+            <textarea id="summary"></textarea>
+          </div>
+
+          <div class="admin-actions">
+            <button class="btn btn-primary" id="saveBtn">Save Report</button>
+            <button class="btn btn-ghost" id="resetBtn">Clear Form</button>
+            <span class="admin-msg" id="saveMsg"></span>
+          </div>
+        </div>
+
+        <!-- EXISTING REPORTS -->
+        <div class="admin-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
+            <h2 style="margin:0;">Existing Reports</h2>
+            <button class="link-btn" id="importBtn" title="One-time: load your current pages into the database">Import starter data</button>
+          </div>
+          <div class="admin-list" id="reportList"></div>
+        </div>
+
+        <!-- BOARD RANKING -->
+        <div class="admin-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
+            <h2 style="margin:0;">Board Ranking</h2>
+            <button class="btn btn-primary" id="saveRankBtn">Save Ranking</button>
+          </div>
+          <p class="muted-note">Order players for the public board (this drives the List view). Use ▲ ▼ to move a player up or down, or mark <strong>NA</strong> for prospects you haven't scouted yet.</p>
+          <div class="admin-list" id="rankRanked"></div>
+          <h3 class="rank-subhead">Not Yet Scouted (NA)</h3>
+          <div class="admin-list rank-list-na" id="rankNA"></div>
+          <span class="admin-msg" id="rankMsg"></span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container"><p>&copy; <span id="year"></span> Chinh Tong. All rights reserved.</p></div>
+  </footer>
+
+  <script src="./2027-nba-draft-prospects/roster.js"></script>
+  <script type="module">
+    import { db, auth } from "./firebase-init.js";
+    import {
+      collection, doc, getDoc, getDocs, setDoc, deleteDoc, serverTimestamp,
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import {
+      onAuthStateChanged, signInWithEmailAndPassword,
+      createUserWithEmailAndPassword, signOut,
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // ============================================================
+    //  OWNER CONFIG
+    //  After you sign up the first time, copy the UID shown at the
+    //  top of the page and paste it here (and into firestore.rules).
+    //  While this is "", any signed-in user can see the form so you
+    //  can bootstrap — but Firestore rules still block writes until
+    //  the UID is in the rules. Set it to lock the admin UI to you.
+    // ============================================================
+    const OWNER_UID = "kvVMmR7vjQPQ7ROJVRYk9JVg4ld2";
+
+    const y = document.getElementById("year");
+    if (y) y.textContent = new Date().getFullYear();
+
+    const $ = (id) => document.getElementById(id);
+    const ROSTER = window.ROSTER || [];
+
+    function slugify(s) {
+      return String(s).toLowerCase().replace(/[.'']/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    }
+    function dateLabel(iso) {
+      if (!iso) return "";
+      const [yr, mo, da] = iso.split("-").map(Number);
+      const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      return `${months[mo-1]} ${da}, ${yr}`;
+    }
+
+    // ---------- populate player dropdown ----------
+    const playerSel = $("player");
+    ROSTER.forEach((p) => {
+      const opt = document.createElement("option");
+      opt.value = p.slug;
+      opt.textContent = `${p.name} — ${p.school}`;
+      playerSel.appendChild(opt);
+    });
+    function applyPlayerDefaults() {
+      const p = ROSTER.find((x) => x.slug === playerSel.value);
+      if (p && !$("editingId").value) $("info").value = p.physicalDefault || "";
+    }
+    playerSel.addEventListener("change", applyPlayerDefaults);
+
+    // ---------- auth ----------
+    function isOwner(user) {
+      return !OWNER_UID || user.uid === OWNER_UID;
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user && isOwner(user)) {
+        $("loginView").style.display = "none";
+        $("noAccessView").style.display = "none";
+        $("appView").style.display = "block";
+        $("whoami").textContent = `Signed in as ${user.email}  ·  UID: ${user.uid}`;
+        applyPlayerDefaults();
+        loadReports();
+        loadBoard();
+      } else if (user) {
+        // signed in, but not the owner account
+        $("loginView").style.display = "none";
+        $("appView").style.display = "none";
+        $("noAccessView").style.display = "block";
+        $("noAccessWho").textContent = `Signed in as ${user.email}`;
+      } else {
+        $("loginView").style.display = "block";
+        $("noAccessView").style.display = "none";
+        $("appView").style.display = "none";
+      }
+    });
+
+    function authError(e) {
+      switch (e.code) {
+        case "auth/invalid-credential": return "Wrong email or password.";
+        case "auth/email-already-in-use": return "That email already has an account — try Log In instead.";
+        case "auth/weak-password": return "Password must be at least 6 characters.";
+        case "auth/invalid-email": return "That doesn't look like a valid email.";
+        case "auth/operation-not-allowed": return "Email/password sign-in isn't enabled in Firebase yet.";
+        default: return e.message;
+      }
+    }
+
+    $("loginBtn").addEventListener("click", async () => {
+      const msg = $("loginMsg"); msg.textContent = ""; msg.className = "admin-msg";
+      try {
+        await signInWithEmailAndPassword(auth, $("email").value.trim(), $("password").value);
+      } catch (e) { msg.textContent = authError(e); msg.className = "admin-msg err"; }
+    });
+
+    $("signupBtn").addEventListener("click", async () => {
+      const msg = $("loginMsg"); msg.textContent = ""; msg.className = "admin-msg";
+      try {
+        await createUserWithEmailAndPassword(auth, $("email").value.trim(), $("password").value);
+        msg.textContent = "Account created — you're signed in.";
+        msg.className = "admin-msg ok";
+      } catch (e) { msg.textContent = authError(e); msg.className = "admin-msg err"; }
+    });
+
+    $("logoutBtn").addEventListener("click", () => signOut(auth));
+    $("logoutBtn2").addEventListener("click", () => signOut(auth));
+
+    // ---------- form helpers ----------
+    function readForm() {
+      const slug = playerSel.value;
+      const p = ROSTER.find((x) => x.slug === slug) || {};
+      const title = $("title").value.trim();
+      const date = $("date").value;
+      return {
+        playerSlug: slug,
+        playerName: p.name || slug,
+        reportType: $("reportType").value,
+        date,
+        dateLabel: dateLabel(date),
+        title,
+        draftProjection: $("draft").value.trim(),
+        roleProjection: $("role").value.trim(),
+        info: $("info").value.trim(),
+        stats: $("stats").value.trim(),
+        physical: $("physical").value.trim(),
+        offense: $("offense").value.trim(),
+        defense: $("defense").value.trim(),
+        outlook: $("outlook").value.trim(),
+        summary: $("summary").value.trim(),
+        lead: $("reportType").value === "preseason"
+          ? ((p.playerClass === "Intl")
+              ? "Preseason scouting notes on the international prospect ahead of the 2026-27 season."
+              : `Preseason scouting notes ahead of ${p.school || ""}'s 2026-27 season.`)
+          : (p.physicalDefault || ""),
+        updatedAt: serverTimestamp(),
+      };
+    }
+    function clearForm() {
+      $("editingId").value = "";
+      ["title","draft","role","stats","physical","offense","defense","outlook","summary"].forEach((k)=>$(k).value="");
+      $("date").value = "";
+      $("reportType").value = "game";
+      applyPlayerDefaults();
+      $("saveBtn").textContent = "Save Report";
+      document.querySelector("#appView h2").textContent = "New Report";
+    }
+    $("resetBtn").addEventListener("click", clearForm);
+
+    // Stable, title-independent document id so re-saving the same logical
+    // report always overwrites instead of creating a duplicate.
+    //   • preseason: one per player            -> <slug>__preseason
+    //   • other types: one per player+type+date -> <slug>__<type>__<date>
+    function reportId(data) {
+      if (data.reportType === "preseason") return `${data.playerSlug}__preseason`;
+      return `${data.playerSlug}__${data.reportType}__${data.date}`;
+    }
+
+    $("saveBtn").addEventListener("click", async () => {
+      const msg = $("saveMsg"); msg.textContent = ""; msg.className = "admin-msg";
+      const data = readForm();
+      if (!data.playerSlug || !data.title || !data.date) {
+        msg.textContent = "Player, title, and date are required."; msg.className = "admin-msg err"; return;
+      }
+      const id = $("editingId").value || reportId(data);
+
+      // Guard against accidental duplicates: if this isn't an in-place edit,
+      // tell the user whether the save will CREATE a new report or OVERWRITE
+      // an existing one, and let them back out.
+      if (!$("editingId").value) {
+        let existsAlready = false;
+        try { existsAlready = (await getDoc(doc(db, "reports", id))).exists(); } catch (_) {}
+        const ok = existsAlready
+          ? confirm(`A report already exists for ${data.playerName} (${data.reportType}, ${data.date}).\n\nSaving will OVERWRITE it. Continue?`)
+          : confirm(`This will CREATE A NEW report for ${data.playerName}.\n\nIf you meant to change an existing report, click Cancel and use its "Edit" button instead.\n\nCreate new report?`);
+        if (!ok) { msg.textContent = "Cancelled — nothing saved."; msg.className = "admin-msg"; return; }
+      }
+
+      try {
+        await setDoc(doc(db, "reports", id), data, { merge: true });
+        msg.textContent = "Saved ✓"; msg.className = "admin-msg ok";
+        clearForm();
+        loadReports();
+      } catch (e) {
+        msg.textContent = e.message; msg.className = "admin-msg err";
+      }
+    });
+
+    // ---------- existing reports ----------
+    async function loadReports() {
+      const list = $("reportList");
+      list.innerHTML = '<p class="muted-note" style="padding:0.6rem 0;">Loading…</p>';
+      try {
+        const snap = await getDocs(collection(db, "reports"));
+        const rows = [];
+        snap.forEach((d) => rows.push({ id: d.id, ...d.data() }));
+        rows.sort((a,b) => (a.playerName||"").localeCompare(b.playerName||"") || (b.date||"").localeCompare(a.date||""));
+        if (!rows.length) { list.innerHTML = '<p class="muted-note" style="padding:0.6rem 0;">No reports yet.</p>'; return; }
+        list.innerHTML = "";
+        rows.forEach((r) => {
+          const item = document.createElement("div");
+          item.className = "admin-list-item";
+          item.innerHTML = `
+            <div>
+              <strong>${r.playerName}</strong> — ${r.title || "(untitled)"}<br>
+              <small>${r.dateLabel || r.date || ""} · ${r.draftProjection || ""}</small>
+            </div>
+            <div class="row-actions">
+              <button class="link-btn" data-edit="${r.id}">Edit</button>
+              <button class="link-btn danger" data-del="${r.id}">Delete</button>
+            </div>`;
+          list.appendChild(item);
+        });
+        list.querySelectorAll("[data-edit]").forEach((b)=>b.addEventListener("click", ()=>editReport(b.getAttribute("data-edit"))));
+        list.querySelectorAll("[data-del]").forEach((b)=>b.addEventListener("click", ()=>delReport(b.getAttribute("data-del"))));
+      } catch (e) {
+        list.innerHTML = `<p class="admin-msg err" style="padding:0.6rem 0;">${e.message}</p>`;
+      }
+    }
+
+    async function editReport(id) {
+      const snap = await getDoc(doc(db, "reports", id));
+      if (!snap.exists()) return;
+      const r = snap.data();
+      $("editingId").value = id;
+      playerSel.value = r.playerSlug;
+      $("reportType").value = r.reportType || "game";
+      $("date").value = r.date || "";
+      $("title").value = r.title || "";
+      $("draft").value = r.draftProjection || "";
+      $("role").value = r.roleProjection || "";
+      $("info").value = r.info || "";
+      $("physical").value = r.physical || "";
+      $("stats").value = r.stats || "";
+      $("offense").value = r.offense || "";
+      $("defense").value = r.defense || "";
+      $("outlook").value = r.outlook || "";
+      $("summary").value = r.summary || "";
+      $("saveBtn").textContent = "Update Report";
+      document.querySelector("#appView h2").textContent = "Edit Report";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function delReport(id) {
+      if (!confirm("Delete this report? This cannot be undone.")) return;
+      await deleteDoc(doc(db, "reports", id));
+      loadReports();
+    }
+
+    // ---------- one-time import of current site content ----------
+    $("importBtn").addEventListener("click", async () => {
+      if (!confirm("Import your current reports into the database? Existing entries with the same id are overwritten.")) return;
+      try {
+        const res = await fetch("./2027-nba-draft-prospects/seed-reports.json");
+        const seed = await res.json();
+        for (const r of seed) {
+          const { id, ...data } = r;
+          data.updatedAt = serverTimestamp();
+          await setDoc(doc(db, "reports", id), data, { merge: true });
+        }
+        alert(`Imported ${seed.length} reports.`);
+        loadReports();
+      } catch (e) {
+        alert("Import failed: " + e.message);
+      }
+    });
+
+    // ---------- board ranking ----------
+    let boardRanked = [];   // ordered slugs (rank 1..n)
+    let boardNA = [];       // unscouted slugs
+
+    function pName(slug){ const p = ROSTER.find((x)=>x.slug===slug); return p ? p.name : slug; }
+    function pMeta(slug){ const p = ROSTER.find((x)=>x.slug===slug) || {}; return `${p.position||""} · ${p.school||""}`; }
+
+    function renderRank(){
+      const ranked = $("rankRanked"), na = $("rankNA");
+      ranked.innerHTML = boardRanked.map((slug, i) => `
+        <div class="admin-list-item">
+          <div><strong>${i+1}.</strong> ${pName(slug)}<br><small>${pMeta(slug)}</small></div>
+          <div class="row-actions">
+            <button class="link-btn" data-up="${slug}" ${i===0?"disabled":""} title="Move up">▲</button>
+            <button class="link-btn" data-down="${slug}" ${i===boardRanked.length-1?"disabled":""} title="Move down">▼</button>
+            <button class="link-btn danger" data-na="${slug}" title="Mark not yet scouted">Set NA</button>
+          </div>
+        </div>`).join("") || '<p class="muted-note" style="padding:0.6rem 0;">No ranked players.</p>';
+
+      na.innerHTML = boardNA.map((slug) => `
+        <div class="admin-list-item">
+          <div><strong style="color:var(--muted);">NA</strong> &nbsp;${pName(slug)}<br><small>${pMeta(slug)}</small></div>
+          <div class="row-actions">
+            <button class="link-btn" data-rank="${slug}" title="Add to ranking">Add to ranking</button>
+          </div>
+        </div>`).join("") || '<p class="muted-note" style="padding:0.6rem 0;">None — every player is ranked.</p>';
+
+      ranked.querySelectorAll("[data-up]").forEach((b)=>b.addEventListener("click", ()=>moveRank(b.getAttribute("data-up"), -1)));
+      ranked.querySelectorAll("[data-down]").forEach((b)=>b.addEventListener("click", ()=>moveRank(b.getAttribute("data-down"), 1)));
+      ranked.querySelectorAll("[data-na]").forEach((b)=>b.addEventListener("click", ()=>setNA(b.getAttribute("data-na"))));
+      na.querySelectorAll("[data-rank]").forEach((b)=>b.addEventListener("click", ()=>setRanked(b.getAttribute("data-rank"))));
+    }
+
+    function moveRank(slug, dir){
+      const i = boardRanked.indexOf(slug), j = i + dir;
+      if (i < 0 || j < 0 || j >= boardRanked.length) return;
+      [boardRanked[i], boardRanked[j]] = [boardRanked[j], boardRanked[i]];
+      renderRank();
+    }
+    function setNA(slug){
+      boardRanked = boardRanked.filter((s)=>s!==slug);
+      if (!boardNA.includes(slug)) boardNA.push(slug);
+      renderRank();
+    }
+    function setRanked(slug){
+      boardNA = boardNA.filter((s)=>s!==slug);
+      if (!boardRanked.includes(slug)) boardRanked.push(slug);
+      renderRank();
+    }
+
+    async function loadBoard(){
+      let ranked = [], na = [];
+      try {
+        const snap = await getDoc(doc(db, "meta", "board"));
+        if (snap.exists()){
+          const d = snap.data();
+          ranked = Array.isArray(d.ranked) ? d.ranked.slice() : [];
+          na = Array.isArray(d.na) ? d.na.slice() : [];
+        }
+      } catch (e) { console.error("Load board failed:", e); }
+
+      const all = ROSTER.map((p)=>p.slug);
+      ranked = ranked.filter((s)=>all.includes(s));
+      na = na.filter((s)=>all.includes(s) && !ranked.includes(s));
+      // Any roster player not placed yet defaults to NA (not yet scouted).
+      all.forEach((s)=>{ if (!ranked.includes(s) && !na.includes(s)) na.push(s); });
+
+      boardRanked = ranked;
+      boardNA = na;
+      renderRank();
+    }
+
+    $("saveRankBtn").addEventListener("click", async () => {
+      const msg = $("rankMsg"); msg.textContent = ""; msg.className = "admin-msg";
+      try {
+        await setDoc(doc(db, "meta", "board"), {
+          ranked: boardRanked,
+          na: boardNA,
+          updatedAt: serverTimestamp(),
+        });
+        msg.textContent = "Ranking saved ✓"; msg.className = "admin-msg ok";
+      } catch (e) {
+        msg.textContent = e.message; msg.className = "admin-msg err";
+      }
+    });
+  </script>
+</body>
+</html>
